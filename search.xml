@@ -290,7 +290,7 @@
 </tr>
 <tr>
 <td align="left"><strong>iOS</strong></td>
-<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxx.app/Data</td>
+<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/AppName.app/Data</td>
 </tr>
 <tr>
 <td align="left"><strong>Android</strong></td>
@@ -319,7 +319,7 @@
 </tr>
 <tr>
 <td align="left"><strong>Mac OS</strong></td>
-<td align="left">/Users/username/Library/Application Support/CompanyName/AppName</td>
+<td align="left">/Users/username/Library/Application Support/CompanyName/ProductName</td>
 </tr>
 <tr>
 <td align="left"><strong>iOS</strong></td>
@@ -352,7 +352,7 @@
 </tr>
 <tr>
 <td align="left"><strong>iOS</strong></td>
-<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxx.app/Data/Raw</td>
+<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/AppName.app/Data/Raw</td>
 </tr>
 <tr>
 <td align="left"><strong>Android</strong></td>
