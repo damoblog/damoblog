@@ -122,7 +122,7 @@
 <figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function">IEnumerator <span class="title">OnTestClick</span>(<span class="params"></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    Resources.UnloadUnusedAssets();<span class="comment">//清干净以免影响测试效果</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">float</span> wait = <span class="number">5f</span>;<span class="comment">//每步都等待5s以便于分析结果</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    GameObject go = Resources.Load(<span class="string">&quot;prefab1&quot;</span>) <span class="keyword">as</span> GameObject;<span class="comment">//加载Prefab</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    GameObject obj = Instantiate(go) <span class="keyword">as</span> GameObject;<span class="comment">//生成实例</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    Destroy(obj);<span class="comment">//销毁实例</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    Resources.UnloadUnusedAssets();<span class="comment">//卸载无用资源</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    go = <span class="literal">null</span>;<span class="comment">//将prefab引用置为空以后卸载无用资源</span></span><br><span class="line"></span><br><span class="line">    Resources.UnloadUnusedAssets();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>放到真机环境下测试以后<br><img src="/2021/05/14/Unity%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%EF%BC%88%E4%BA%8C%EF%BC%89Asset/img2.png" alt="在这里插入图片描述"></p>
 <p>可以看到Load时候引用类型的Assert（即pic1）已经被加载到内存中，实例化时候只是Clone和对已经加载到内存中的Assert引用</p>
-<h2 id="什么时候才是UnusedAssets"><a href="#什么时候才是UnusedAssets" class="headerlink" title="什么时候才是UnusedAssets?"></a>什么时候才是UnusedAssets?</h2><p>从上面例子中可以看到Destory一个Prefab实例以后，这时候Prefab已经没有被实际的物体引用了，但如果这时：<br>Resources.UnloadUnusedAssets();<br>内存并没有被释放，原因：Prefab还被这个变量go所引用这时候：<br>go = null;<br>Resources.UnloadUnusedAssets();<br>这样才能真正释放Assets对象<br>所以：UnusedAssets不但要没有被实际物体引用，也要没有被生命周期内的变量所引用，才可以理解为 Unused(引用计数为0)<br>所以：如果用个全局变量保存Load的Assets，又没有显式的设为null，那在这个变量失效前是无论如何UnloadUnusedAssets也释放不了那些Assets的<br>可以再写下如下代码测试</p>
+<h2 id="什么时候才是UnusedAssets"><a href="#什么时候才是UnusedAssets" class="headerlink" title="什么时候才是UnusedAssets?"></a>什么时候才是UnusedAssets?</h2><p>从上面例子中可以看到Destory一个Prefab实例以后，这时候Prefab已经没有被实际的物体引用了，但如果这时：<br>Resources.UnloadUnusedAssets();<br>内存并没有被释放，原因：Prefab还被这个变量go所引用这时候：<br>go = null;<br>Resources.UnloadUnusedAssets();<br>这样才能真正释放Assets对象<br>所以：UnusedAssets不但要没有被实际物体引用，也要没有被<strong>生命周期内的变量</strong>所引用，才可以理解为 Unused(引用计数为0)<br>所以：如果用个全局变量保存Load的Assets，又没有显式的设为null，那在这个变量失效前是无论如何UnloadUnusedAssets也释放不了那些Assets的<br>可以再写下如下代码测试</p>
 <figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="function">IEnumerator <span class="title">OnTestClick</span>(<span class="params"></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    Resources.UnloadUnusedAssets();<span class="comment">//清干净以免影响测试效果</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">float</span> wait = <span class="number">5f</span>;<span class="comment">//每步都等待5s以便于分析结果</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    Texture tt = Resources.Load(<span class="string">&quot;pic1&quot;</span>) <span class="keyword">as</span> Texture;<span class="comment">//加载贴图</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    GameObject go = Resources.Load(<span class="string">&quot;prefab1&quot;</span>) <span class="keyword">as</span> GameObject;<span class="comment">//加载Prefab</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    GameObject obj = Instantiate(go) <span class="keyword">as</span> GameObject;<span class="comment">//生成实例</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    Destroy(obj);<span class="comment">//销毁实例</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    Resources.UnloadUnusedAssets();<span class="comment">//卸载无用资源</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    go = <span class="literal">null</span>;<span class="comment">//将prefab引用置为空以后卸载无用资源</span></span><br><span class="line"></span><br><span class="line">    Resources.UnloadUnusedAssets();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params">wait</span>)</span>;</span><br><span class="line"></span><br><span class="line">    tt = <span class="literal">null</span>;<span class="comment">//将texture引用置为空以后卸载无用资源</span></span><br><span class="line"></span><br><span class="line">    Resources.UnloadUnusedAssets();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="/2021/05/14/Unity%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%EF%BC%88%E4%BA%8C%EF%BC%89Asset/img3.png" alt="在这里插入图片描述"><br>这里可以确认prefab中加载的Assert pic1直接加载的pic1占有的是同一块内存，并且仅当go和tt都显示的置为null以后，才可以被UnloadUnusedAssets<br>举个例子帮助理解<br>你从Resources里Load了一个prefab并克隆之：obj = Instaniate(Resources.Load(“prefab1”));<br>这个prefab比如是个npc<br>然后你不需要他的时候你用了：Destroy(obj);你以为就释放干净了<br>其实这时候只是释放了Clone对象，通过Load加载的所有引用、非引用Assets对象全都静静的躺在内存里。<br>这种情况应该在Destroy以后再Resources.UnloadUnusedAssets()才能把Assets清除，<br>当然如果你是go = Resources.Load(“prefab1”), obj = Instaniate(go);<br>必须先go = null以后再Resources.UnloadUnusedAssets()才能把Assets清除，<br>当然如果这个NPC也是要频繁创建，销毁的 那就应该让那些Assets呆在内存里以加速游戏体验。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Resources.Load会把需要的所有Assets加载到内存中，当Instaniate时候会Clone和对已经加载到内存中的Assert引用，这些Assets只有在没有被实际物体引用，也没有被生命周期内的变量所引用，才可以理解为Unused，才能被Resources.UnloadUnusedAssets()<br>同理，静态引用的时候由于始终有一个生命周期的对象引用pic1，只要中途没有把这个变量显示的置为null，pic1会自始至终躺在内存中<br>至于AssetBundle.Load，可以把Resources.Load看作是从一个缺省打进程序包里的AssetBundle里加载资源，AssetBundle.load也是在load时候把Perfab的全部Assets加载到内存中</p>
@@ -162,7 +162,7 @@
   <entry>
     <title>Unity资源管理（三）Unity默认路径</title>
     <url>/2021/05/19/Unity%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%EF%BC%88%E4%B8%89%EF%BC%89Unity%E9%BB%98%E8%AE%A4%E8%B7%AF%E5%BE%84/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Unity中总共有四个数据文件路径dataPath、streamingAssetsPath、 persistentDataPath、temporaryCachePath，四个路径都是相对路径，不同平台下返回的路径不一样。<br><img src="/2021/05/19/Unity%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%EF%BC%88%E4%B8%89%EF%BC%89Unity%E9%BB%98%E8%AE%A4%E8%B7%AF%E5%BE%84/img1.png" alt="在这里插入图片描述"></p>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>Unity中总共有四个数据文件路径dataPath、streamingAssetsPath、 persistentDataPath、temporaryCachePath，四个路径都是相对路径，不同平台下返回的路径不一样。</p>
 <h1 id="Application-dataPath"><a href="#Application-dataPath" class="headerlink" title="Application.dataPath"></a>Application.dataPath</h1><p><a href="https://docs.unity3d.com/2021.2/Documentation/ScriptReference/Application-dataPath.html">官方文档</a></p>
 <p>dataPath是包含游戏数据文件夹的路径，是app程序包安装路径（安装应用时，系统自动将安装包拷贝到dataPath路径下进行安装），一般不会去手动读写这个目录。</p>
 <table>
@@ -268,6 +268,132 @@
 <td align="left">是</td>
 </tr>
 </tbody></table>
+<h1 id="路径地址"><a href="#路径地址" class="headerlink" title="路径地址"></a>路径地址</h1><ul>
+<li><strong>Application.dataPath</strong><table>
+<thead>
+<tr>
+<th align="left">平台</th>
+<th align="left">地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Editor</strong></td>
+<td align="left">项目路径/Assets</td>
+</tr>
+<tr>
+<td align="left"><strong>Windows</strong></td>
+<td align="left">安装路径/ProductName_Data</td>
+</tr>
+<tr>
+<td align="left"><strong>Mac OS</strong></td>
+<td align="left">/Applications/AppName.app/Contents</td>
+</tr>
+<tr>
+<td align="left"><strong>iOS</strong></td>
+<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxx.app/Data</td>
+</tr>
+<tr>
+<td align="left"><strong>Android</strong></td>
+<td align="left">/data/app/package.name.apk</td>
+</tr>
+</tbody></table>
+</li>
+<li><strong>Application.persistentDataPath</strong><table>
+<thead>
+<tr>
+<th align="left">平台</th>
+<th align="left">地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Editor</strong></td>
+<td align="left">C:/Users/username/AppData/LocalLow/CompanyName/ProductName</td>
+</tr>
+<tr>
+<td align="left">或</td>
+<td align="left">/Users/username/Library/Application Support/CompanyName/ProductName</td>
+</tr>
+<tr>
+<td align="left"><strong>Windows</strong></td>
+<td align="left">C:/Users/username/AppData/LocalLow/CompanyName/ProductName</td>
+</tr>
+<tr>
+<td align="left"><strong>Mac OS</strong></td>
+<td align="left">/Users/username/Library/Application Support/CompanyName/AppName</td>
+</tr>
+<tr>
+<td align="left"><strong>iOS</strong></td>
+<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/Documents</td>
+</tr>
+<tr>
+<td align="left"><strong>Android</strong></td>
+<td align="left">/data/data/package.name/files</td>
+</tr>
+</tbody></table>
+</li>
+<li><strong>Application.streamingAssetsPath</strong><table>
+<thead>
+<tr>
+<th align="left">平台</th>
+<th align="left">地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Editor</strong></td>
+<td align="left">项目路径/Assets/StreamingAssets</td>
+</tr>
+<tr>
+<td align="left"><strong>Windows</strong></td>
+<td align="left">安装路径/ProductName_Data/StreamingAssets</td>
+</tr>
+<tr>
+<td align="left"><strong>Mac OS</strong></td>
+<td align="left">/Applications/AppName.app/Contents/Resources/Data/StreamingAssets</td>
+</tr>
+<tr>
+<td align="left"><strong>iOS</strong></td>
+<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/xxx.app/Data/Raw</td>
+</tr>
+<tr>
+<td align="left"><strong>Android</strong></td>
+<td align="left">jar:file:///data/app/package.name.apk/!/assets</td>
+</tr>
+</tbody></table>
+</li>
+<li><strong>Application.temporaryCachePath</strong><table>
+<thead>
+<tr>
+<th align="left">平台</th>
+<th align="left">地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Editor</strong></td>
+<td align="left">C:/Users/username/AppData/Local/Temp/CompanyName/ProductName</td>
+</tr>
+<tr>
+<td align="left">或</td>
+<td align="left">/var/folders/xx/xxxxxxxxxxxxxx/X/CompanyName/ProductName</td>
+</tr>
+<tr>
+<td align="left"><strong>Windows</strong></td>
+<td align="left">C:/Users/username/AppData/Local/Temp/CompanyName/ProductName</td>
+</tr>
+<tr>
+<td align="left"><strong>Mac OS</strong></td>
+<td align="left">/var/folders/xx/xxxxxxxxxxxxxx/X/CompanyName/ProductName</td>
+</tr>
+<tr>
+<td align="left"><strong>iOS</strong></td>
+<td align="left">/Application/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/Library/Caches</td>
+</tr>
+<tr>
+<td align="left"><strong>Android</strong></td>
+<td align="left">/data/data/package.name/cache</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
 <h1 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h1><ul>
 <li>Android下，Application.streamingAssetsPath目录下文件被压缩到单独的.jar文件，不能直接用System.IO 读取，只能用UnityWebRequest读取</li>
 <li>在IOS和Android下，可以使用AssetBundle.LoadFromFile来同步读取Application.streamingAssetsPath中数据</li>
