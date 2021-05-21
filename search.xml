@@ -418,7 +418,7 @@
     <url>/2021/05/21/Unity%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%EF%BC%88%E5%9B%9B%EF%BC%89Resources%E7%9B%AE%E5%BD%95/</url>
     <content><![CDATA[<h1 id="Resources目录"><a href="#Resources目录" class="headerlink" title="Resources目录"></a>Resources目录</h1><p>所有放在Assets/Resources目录下（可以是一个，也可以有很多个，可以在任意的子目录下面）的资源都当做Resources。无论游戏是否使用，都会被打包到最终的程序里，并能通过以下方法获得对象：</p>
 <figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">Resources.Load(<span class="string">&quot;fileName&quot;</span>);</span><br></pre></td></tr></table></figure>
-<p>注意：函数内的参数为相对于Resource目录下的文件路径与名称，不包含后缀。<br>在运行时,Assets目录下所有Resources的文件路径将被合并。<br>例：Assets/Resources/test.txt 与 Assets/Test/Resources/test.png在使用Resource.Load(“test”)载入时，将被视为同一资源，只会返回第一个符合名称的对象。如果使用Resource.Load(“test”)将返回text.txt；<br>　　如果在Resources下有相同路径及名称的资源，使用以上方法只能获得第一个符合查找条件的对象，使用以下方法能或得到所有符合条件的对象：</p>
+<p>注意：函数内的参数为相对于Resource目录下的文件路径与名称，不包含后缀。<br>在运行时,Assets目录下所有Resources的文件路径将被合并。<br>例：Assets/Resources/test.txt 与 Assets/Test/Resources/test.png在使用Resource.Load(“test”)载入时，将被视为同一资源，只会返回第一个符合名称的对象。如果使用Resource.Load(“test”)将返回text.txt；<br>如果在Resources下有相同路径及名称的资源，使用以上方法只能获得第一个符合查找条件的对象，使用以下方法能或得到所有符合条件的对象：</p>
 <figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line">Object[] assets = Resources.LoadAll(<span class="string">&quot;fileName&quot;</span>);</span><br></pre></td></tr></table></figure>
 
 <h1 id="Resources弊端"><a href="#Resources弊端" class="headerlink" title="Resources弊端"></a>Resources弊端</h1><p><a href="https://learn.unity.com/tutorial/assets-resources-and-assetbundles#5c7f8528edbc2a002053b5a6">官方文档</a><br>官方的建议是不要使用它。提出此强烈建议的原因有以下：</p>
