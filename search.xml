@@ -444,4 +444,171 @@
         <tag>资源管理</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Puerts接入Unity</title>
+    <url>/2021/08/25/Puerts%E6%8E%A5%E5%85%A5Unity/</url>
+    <content><![CDATA[<h1 id="接入Puerts代码"><a href="#接入Puerts代码" class="headerlink" title="接入Puerts代码"></a>接入Puerts代码</h1><ul>
+<li>从<a href="https://github.com/Tencent/puerts/releases">releases</a>页面下载对应版本的Puerts<ul>
+<li><code>Plugins_V8_verx.tgz</code> 编译好的 V8 文件</li>
+<li><code>Sources_code(zip)</code> Puerts源码</li>
+</ul>
+</li>
+<li>添加Puerts到项目中<ul>
+<li>拷贝源码 <code>puerts-x.x.x.zip</code> 解压出来的 <code>unity/Assets/Puerts/</code> 目录到 <code>项目/Assets/</code> 目录下</li>
+</ul>
+</li>
+<li>添加V8到项目中<ul>
+<li>拷贝<code>Plugins_V8_verx.tgz</code> 解压出来的 <code>Plugins/</code> 目录到 <code>项目/Assets/</code> 目录下</li>
+</ul>
+</li>
+<li>接入<ul>
+<li>可以使用如下代码测试是否接入正常</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> Puerts;                       <span class="comment">// 引用 Puerts</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span>&#123;   </span><br><span class="line">    <span class="keyword">public</span> JsEnv jsEnv;             <span class="comment">// 定义 jsEnv</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        jsEnv = <span class="keyword">new</span> JsEnv();        <span class="comment">// 实例化 js 虚拟机</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用虚拟机运行 js 脚本</span></span><br><span class="line">        jsEnv.Eval(<span class="string">@&quot;</span></span><br><span class="line"><span class="string">            const CS = require(&#x27;csharp&#x27;);</span></span><br><span class="line"><span class="string">            let gameObject = new CS.UnityEngine.GameObject(&#x27;test&#x27;);</span></span><br><span class="line"><span class="string">            CS.UnityEngine.Debug.Log(gameObject.name);</span></span><br><span class="line"><span class="string">        &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Puerts加载独立-js文件"><a href="#Puerts加载独立-js文件" class="headerlink" title="Puerts加载独立.js文件"></a>Puerts加载独立.js文件</h1><ul>
+<li>将之前的Eval中Js代码粘贴出来创建为main.js, 并保存到<code>Assets/Resources/JsScript</code>目录下(可以根据项目需求放置，一般会在后期改为ab资源加载)</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Assets/Resources/JsScript/main.js 文件内容</span></span><br><span class="line"><span class="keyword">const</span> CS = <span class="built_in">require</span>(<span class="string">&#x27;csharp&#x27;</span>);</span><br><span class="line"><span class="keyword">let</span> gameObject = <span class="keyword">new</span> CS.UnityEngine.GameObject(<span class="string">&#x27;test&#x27;</span>);</span><br><span class="line">CS.UnityEngine.Debug.Log(gameObject.name);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自定义Loader文件继承 purets中的ILoader接口(参考如下)</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> Puerts;</span><br><span class="line"><span class="keyword">using</span> System.IO;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">JsLoader</span> : <span class="title">ILoader</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">string</span> mJsRoot;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 构造方法</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;debugRoot&quot;&gt;</span>Js 脚本存放目录<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JsLoader</span>(<span class="params"><span class="built_in">string</span> jsRoot</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        mJsRoot = jsRoot;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> * 接口要求实现</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 判断文件是否存在</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;filePath&quot;&gt;</span>文件路径<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span>true/false<span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">bool</span> <span class="title">FileExists</span>(<span class="params"><span class="built_in">string</span> filePath</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> asset = <span class="built_in">string</span>.Empty;</span><br><span class="line">        <span class="built_in">string</span> path = PathUnified(mJsRoot, filePath);</span><br><span class="line">        <span class="keyword">return</span> ResourcesSys.Instance.FindResource(path.ToLower(), <span class="keyword">out</span> asset);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> * 接口要求实现</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 文件内容读取</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;filePath&quot;&gt;</span>模块路径<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;debugPath&quot;&gt;</span>文件完整路径<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span>文本内容<span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">string</span> <span class="title">ReadFile</span>(<span class="params"><span class="built_in">string</span> filePath, <span class="keyword">out</span> <span class="built_in">string</span> debugPath</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        debugPath = PathUnified(mJsRoot, filePath);</span><br><span class="line">        <span class="keyword">return</span> ResourcesSys.Instance.LoadObject&lt;TextAsset&gt;(debugPath.ToLower()).text;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 纠正路径（Windows下路径斜杠不正确的问题）</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;args&quot;&gt;</span><span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span>纠正之后的路径<span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="built_in">string</span> <span class="title">PathUnified</span>(<span class="params"><span class="keyword">params</span> <span class="built_in">string</span>[] args</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Path.Combine(args).Replace(<span class="string">&quot;\\&quot;</span>,<span class="string">&quot;/&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改之前的Test的脚本</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> Puerts;                       <span class="comment">// 引用 Puerts</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span>&#123;   </span><br><span class="line">    <span class="keyword">public</span> JsEnv jsEnv;             <span class="comment">// 定义 jsEnv</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        jsEnv = <span class="keyword">new</span> JsEnv(<span class="keyword">new</span> JsLoader(<span class="string">&quot;JsScript/&quot;</span>), <span class="number">43990</span>);        <span class="comment">// 实例化 js 虚拟机</span></span><br><span class="line"></span><br><span class="line">        jsEnv.Eval(<span class="string">&quot;require(&#x27;main.js&#x27;)&quot;</span>);                           <span class="comment">// 使用虚拟机运行 js 脚本</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>技术</category>
+        <category>Unity</category>
+      </categories>
+      <tags>
+        <tag>typeScript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Puerts配置vscode环境</title>
+    <url>/2021/08/25/Puerts%E9%85%8D%E7%BD%AEvscode%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><ul>
+<li><p>安装<a href="https://code.visualstudio.com/">vscode</a></p>
+</li>
+<li><p>安装<a href="https://nodejs.org/zh-cn/">Node.js</a></p>
+</li>
+<li><p>安装npm, npm为Node.js 自带的包管理工具，上面安装Node时就已经安装上了</p>
+</li>
+<li><p>在 <code>项目/Assets/</code> 目录下建TypeScript文件夹用于存放项目typescript代码</p>
+<ul>
+<li>安装TypeScript到系统环境（在 <code>项目/Assets/TypeScript/目录</code> ）下打开控制台（下同））<ul>
+<li> 输入 <code>npm install typescript -g</code> 安装</li>
+</ul>
+</li>
+<li>安装node.js依赖模块<ul>
+<li> 输入 <code>npm install</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>tsc编译器</p>
+<ul>
+<li>重启vscode</li>
+<li>在vscode控制台输入 <code>tsc</code></li>
+<li>运行失败的话，按照以下步骤操作(windows)<ul>
+<li>以管理员身份运行 <code>Windows Power Shell</code> 终端</li>
+<li>执行命令: <code>set-ExecutionPolicy RemoteSigned</code></li>
+<li>在控制台提示下输入 <code>A</code> 并回车</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Unity安装VscodePackage(Package Manager中搜索Visual Studio Code Editor即可)</p>
+</li>
+<li><p>设置编辑器为 vscode</p>
+<ul>
+<li>windows<ul>
+<li>Edit -&gt; Prefereneces… -&gt; External Tools -&gt; External Script Editor<ul>
+<li>选择 Visual Studio Code</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Mac<ul>
+<li>Unity -&gt; Preferences…-&gt; External Tools -&gt; External Script Editor<ul>
+<li>选择 Visual Studio Code</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>修改VS Code Path</p>
+<ul>
+<li>Edit -&gt; Prefereneces… -&gt; vscode<ul>
+<li>修改 VS Code Path为正确地址(一般为安装目录/bin/code.cmd)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>安装插件 vscode扩展中安装</p>
+<ul>
+<li>C#</li>
+<li>Auto-Using for C#</li>
+<li>Chinese (Simplified) Language Pack for Visual Studio Code</li>
+<li>Debugger for Unity</li>
+<li>Unity Code Snippets</li>
+<li>Unity Snippets</li>
+<li>Unity Tools</li>
+</ul>
+</li>
+</ul>
+<h1 id="vscode调试-C-代码"><a href="#vscode调试-C-代码" class="headerlink" title="vscode调试 C# 代码"></a>vscode调试 C# 代码</h1><h2 id="配置launch-json"><a href="#配置launch-json" class="headerlink" title="配置launch.json"></a>配置launch.json</h2><p>  删除项目中<code>.vscode</code>目录下launch.json文件，将右边选项切换到<strong>运行和调试目录</strong>，点击创建launch.json，选择unity Debugger选项<br>  这里有个坑点，有时候可能没有这个选项，选项切换到<strong>插件(扩展)目录</strong>点击Debugger for Unity打开扩展Debugger for Unity界面，再将选项切回<strong>运行和调试目录</strong>, 点击创建launch.json选择unity Debugger选项<br>  此时运行unity代码即可在vscode中调试C#代码</p>
+<h2 id="C-代码代码没有跳转和自动提示功能"><a href="#C-代码代码没有跳转和自动提示功能" class="headerlink" title="C#代码代码没有跳转和自动提示功能"></a>C#代码代码没有跳转和自动提示功能</h2><p>  按下键盘的Ctrl/Command + Shift+ P快捷键，选定工程目录下的sln文件。<br>  稍等几秒等待自动加载完成以后可以重试一下是否有代码提示功能。<br>  可以参考如下链接<br>  <a href="https://blog.csdn.net/cbaili/article/details/110157060">解决VSCode无法显示Unity代码提示的真正解决办法</a></p>
+<h1 id="配置ts-gt-js环境"><a href="#配置ts-gt-js环境" class="headerlink" title="配置ts-&gt;js环境"></a>配置ts-&gt;js环境</h1><h2 id="修改package-json并安装依赖"><a href="#修改package-json并安装依赖" class="headerlink" title="修改package.json并安装依赖"></a>修改package.json并安装依赖</h2><figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;puerts&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;watch:swc&quot;</span>: <span class="string">&quot;node ./Build.js watch&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;build:swc&quot;</span>: <span class="string">&quot;node ./Build.js clear &amp;&amp; node ./Build.js build&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;publish:swc&quot;</span>: <span class="string">&quot;node ./Build.js clear &amp;&amp; node ./Build.js build &amp;&amp; node ./Build.js compress&quot;</span>,</span><br><span class="line"></span><br><span class="line">    <span class="attr">&quot;watch:tsc&quot;</span>: <span class="string">&quot;tsc -b tsconfig.json -w&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;build:tsc&quot;</span>: <span class="string">&quot;node ./Build.js clear &amp;&amp; tsc -b tsconfig.json&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;publish:tsc&quot;</span>: <span class="string">&quot;node ./Build.js clear &amp;&amp; tsc -b tsconfig.json &amp;&amp; node ./Build.js compress&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;dependencies&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;@swc-node/core&quot;</span>: <span class="string">&quot;^1.3.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;fs-extra&quot;</span>: <span class="string">&quot;^9.1.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;uglify-js&quot;</span>: <span class="string">&quot;^3.13.1&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li> name，项目名称（用于发布到npm仓库上的），在游戏开发中用不上</li>
+<li> version，项目版本（用于发布到npm仓库上的），在游戏开发中用不上</li>
+<li> scripts，定义的构建脚本，可以将任意工作流定义其中。npm run 任务名 来执行某个任务</li>
+<li>dependencies，这里定义了项目中要用到的依赖<ul>
+<li>@swc-node/core，swc 编译器</li>
+<li>fs-extra，一个 node 文件操作模块增强版本</li>
+<li>uglify-js，一个 Js 代码压缩模块<br>在项目目录下运行 npm install 来拉取依赖到本地，拉取到的所有的依赖都将保存在 node_modules 目录中</li>
+</ul>
+</li>
+</ul>
+<h2 id="修改tsconfig-json-文件"><a href="#修改tsconfig-json-文件" class="headerlink" title="修改tsconfig.json 文件"></a>修改tsconfig.json 文件</h2><figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;compilerOptions&quot;</span>: &#123;</span><br><span class="line">        <span class="attr">&quot;target&quot;</span>: <span class="string">&quot;ESNext&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;module&quot;</span>: <span class="string">&quot;CommonJS&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;jsx&quot;</span>: <span class="string">&quot;react-jsx&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;lib&quot;</span>: [<span class="string">&quot;ESNext&quot;</span> ,<span class="string">&quot;DOM&quot;</span>],</span><br><span class="line">        <span class="attr">&quot;inlineSourceMap&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;moduleResolution&quot;</span>: <span class="string">&quot;node&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;experimentalDecorators&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">&quot;baseUrl&quot;</span>: <span class="string">&quot;./TypeScript/&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;typeRoots&quot;</span>: [</span><br><span class="line">            <span class="string">&quot;./Assets/Puerts/Typing&quot;</span>,</span><br><span class="line">            <span class="string">&quot;./Assets/Gen/Typing&quot;</span>,</span><br><span class="line">            <span class="string">&quot;./node_modules/@types&quot;</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">&quot;outDir&quot;</span>: <span class="string">&quot;./Assets/Resources/JsScript/&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>target，编译最高可支持的语法，这里不像浏览器一样，需要考虑很多低版本的兼容问题。自然是全都可以要</li>
+<li>module，模块规范，Puerts 默认只支持 CommonJs</li>
+<li>jsx，看项目情况需要，可以使用 jsx 来写 ui</li>
+<li>lib，内置Js API 的默认类型定义</li>
+<li>inlineSourceMap，在调试时，开发工具要将 Js 代码与原始 Ts 对应上都依赖于 Map 信息。</li>
+<li>moduleResolution，模块解析策略，按 node 方式来吧</li>
+<li>experimentalDecorators，启用装饰器，这是 W3C 尚未正式列入标准的特性，但非常好用。当然开启了</li>
+<li>baseUrl，基本目录</li>
+<li>typeRoots，指定哪些文件默认需要引入，否则就需要手动使用『三斜杠』指令手动引入。</li>
+<li>outDir，编译输出目录</li>
+</ul>
+<h2 id="创建main-ts测试"><a href="#创建main-ts测试" class="headerlink" title="创建main.ts测试"></a>创建main.ts测试</h2><p>运行 <code>npm run watch:tsc</code> 启动监听编译，这样 TypeScript 目录下所有的 ts 文件有任何改动。都会实时编译。<br>在 <code>TypeScript/</code> 目录下创建 <code>main.ts</code>文件，内容如下:</p>
+<figure class="highlight typescript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;System, UnityEngine&#125; <span class="keyword">from</span> <span class="string">&#x27;csharp&#x27;</span></span><br><span class="line"></span><br><span class="line">UnityEngine.Debug.Log(<span class="string">&#x27;Hello World&#x27;</span>);</span><br><span class="line"><span class="keyword">let</span> obj:UnityEngine.GameObject = <span class="keyword">new</span> UnityEngine.GameObject(<span class="string">&quot;testObject&quot;</span>);</span><br><span class="line">obj.transform.position = <span class="keyword">new</span> UnityEngine.Vector3(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+<p><code>outDir</code>对应目录中会编译出对应的ts文件<br>也可以执行<code>npm run build:tsc</code>手动编译</p>
+<h1 id="vscode调试-typescript-代码"><a href="#vscode调试-typescript-代码" class="headerlink" title="vscode调试 typescript 代码"></a>vscode调试 typescript 代码</h1><p><a href="https://github.com/Tencent/puerts/blob/master/doc/unity/vscode_debug.md">参考官方文档</a><br>可以用以下代码测试</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> Puerts;                       <span class="comment">// 引用 Puerts</span></span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> EJsDebugStyle</span><br><span class="line">&#123;</span><br><span class="line">    Disable,    <span class="comment">//不调试</span></span><br><span class="line">    Sync,       <span class="comment">//同步阻塞</span></span><br><span class="line">    Async,      <span class="comment">//异步调试</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span>&#123;   </span><br><span class="line">    <span class="keyword">public</span> JsEnv jsEnv;             <span class="comment">// 定义 jsEnv</span></span><br><span class="line">    <span class="keyword">public</span> EJsDebugStyle jsDebugStyle;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        initJsEnv();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">async</span> <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initJsEnv</span>(<span class="params"></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        jsEnv = <span class="keyword">new</span> JsEnv(<span class="keyword">new</span> JsLoader(<span class="string">&quot;JsScript/&quot;</span>), <span class="number">43990</span>);</span><br><span class="line">        <span class="keyword">if</span> (jsDebugStyle == EJsDebugStyle.Sync)</span><br><span class="line">        &#123;</span><br><span class="line">            jsEnv.WaitDebugger();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (jsDebugStyle == EJsDebugStyle.Async)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">await</span> jsEnv.WaitDebuggerAsync();</span><br><span class="line">        &#125;</span><br><span class="line">        jsEnv.Eval(<span class="string">&quot;require(&#x27;main.js&#x27;)&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="断点调试"><a href="#断点调试" class="headerlink" title="断点调试"></a>断点调试</h2><p>launch.json在原来基础上加入Puerts Debug</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;0.2.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Puerts Debug&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;node&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;attach&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;protocol&quot;</span>: <span class="string">&quot;inspector&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;port&quot;</span>: <span class="number">43990</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Unity Editor&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;unity&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;path&quot;</span>: <span class="string">&quot;/E:/AornGame/Library/EditorInstance.json&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调试启用<code>Puerts Debug</code>选项并在需要打断点ts代码处加上debugger<br><a href="https://www.cnblogs.com/dmc-nero/p/13289214.html">参考文档</a><br>便可以断点调试ts代码</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+        <category>Unity</category>
+      </categories>
+      <tags>
+        <tag>typeScript</tag>
+      </tags>
+  </entry>
 </search>
