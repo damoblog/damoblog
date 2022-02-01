@@ -1,4 +1,7 @@
-http://www.lidamo.cn/Lua-%E5%8F%8C%E5%87%BB%E6%89%93%E5%8D%B0%E6%97%A5%E5%BF%97%E8%B7%B3%E8%BD%AC%E4%BB%A3%E7%A0%81/
+http://www.lidamo.cn/XLua-%E9%85%8D%E7%BD%AE%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83(VSCode)/
+http://www.lidamo.cn/XLua-EmmyLua%E6%8E%A5%E5%85%A5(VSCode)/
+http://www.lidamo.cn/XLua-%E5%9F%BA%E6%9C%AC%E6%8E%A5%E5%85%A5/
+http://www.lidamo.cn/XLua-%E5%8F%8C%E5%87%BB%E6%89%93%E5%8D%B0%E6%97%A5%E5%BF%97%E8%B7%B3%E8%BD%AC%E4%BB%A3%E7%A0%81/
 http://www.lidamo.cn/%E6%94%BE%E7%BD%AE%E7%B1%BB%E5%8D%A1%E7%89%8C%E6%88%98%E6%96%97-(%E4%BA%8C%E5%8D%81%E5%9B%9B)-%E5%AE%8C%E7%BB%93/
 http://www.lidamo.cn/%E6%94%BE%E7%BD%AE%E7%B1%BB%E5%8D%A1%E7%89%8C%E6%88%98%E6%96%97-(%E4%BA%8C%E5%8D%81%E4%B8%89)-%E7%9B%B8%E6%9C%BA%E7%AE%A1%E7%90%86/
 http://www.lidamo.cn/%E6%94%BE%E7%BD%AE%E7%B1%BB%E5%8D%A1%E7%89%8C%E6%88%98%E6%96%97-(%E4%BA%8C%E5%8D%81%E4%BA%8C)-%E6%8A%80%E8%83%BD%E8%AE%BE%E8%AE%A1-%E6%80%BB%E7%BB%93/
