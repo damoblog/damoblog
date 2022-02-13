@@ -2,18 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://www.lidamo.cn/posts/3046419108/</loc>
+    <loc>http://www.lidamo.cn/posts/1935030494/</loc>
     
-    <lastmod>2022-02-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.lidamo.cn/posts/448179590/</loc>
-    
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -22,7 +13,16 @@
   <url>
     <loc>http://www.lidamo.cn/posts/2639157374/</loc>
     
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lidamo.cn/posts/3046419108/</loc>
+    
+    <lastmod>2022-02-13</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -30,6 +30,15 @@
   
   <url>
     <loc>http://www.lidamo.cn/xlua/index.html</loc>
+    
+    <lastmod>2022-02-13</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lidamo.cn/posts/448179590/</loc>
     
     <lastmod>2022-02-12</lastmod>
     
@@ -463,7 +472,7 @@
 
   <url>
     <loc>http://www.lidamo.cn/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -471,28 +480,28 @@
   
   <url>
     <loc>http://www.lidamo.cn/tags/%E6%A1%86%E6%9E%B6/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/tags/lua/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/tags/typescript/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -501,63 +510,63 @@
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/</loc>
-    <lastmod>2022-02-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.lidamo.cn/categories/hexo/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/UI%E7%AE%A1%E7%90%86/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lidamo.cn/categories/hexo/</loc>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/Puerts/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/Unity/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/XLua/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/%E6%88%98%E6%96%97/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://www.lidamo.cn/categories/%E6%8A%80%E6%9C%AF/%E6%88%98%E6%96%97/%E6%94%BE%E7%BD%AE%E7%B1%BB%E5%8D%A1%E7%89%8C%E6%88%98%E6%96%97/</loc>
-    <lastmod>2022-02-12</lastmod>
+    <lastmod>2022-02-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
