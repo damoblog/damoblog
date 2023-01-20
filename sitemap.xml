@@ -665,14 +665,14 @@
   </url>
   
   <url>
-    <loc>https://damoblog.github.io/categories/hexo/</loc>
+    <loc>https://damoblog.github.io/categories/%E6%8A%80%E6%9C%AF/Puerts/</loc>
     <lastmod>2023-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://damoblog.github.io/categories/%E6%8A%80%E6%9C%AF/Puerts/</loc>
+    <loc>https://damoblog.github.io/categories/hexo/</loc>
     <lastmod>2023-01-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
